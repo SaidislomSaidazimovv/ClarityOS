@@ -13,7 +13,7 @@ export default function TextGenerator() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/generate", {
+      const res = await axios.post("https://bc-1kwq.onrender.com/api/generate", {
         prompt,
       });
 
