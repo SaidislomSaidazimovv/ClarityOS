@@ -5,7 +5,7 @@ import { useTranslator } from "../hooks/useTranslator";
 
 export default function Header() {
   const [role, setRole] = useState("guest");
-  const [lang, setLang] = useState(localStorage.getItem("lang") || "ru");
+  const [lang, setLang] = useState(localStorage.getItem("lang") || "en");
   const navigate = useNavigate();
 
   const loginText = useTranslator("Login");
@@ -76,10 +76,10 @@ export default function Header() {
                  bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
                  cursor-pointer transition"
                 >
-                  <option value="ru">🇷🇺 Русский</option>
-                  <option value="uz">🇺🇿 Uzbek</option>
-                  <option value="en">🇺🇸 English</option>
-                  <option value="zh">🇨🇳 中文</option>
+                  <option value="ru">RU</option>
+                  <option value="uz">UZ</option>
+                  <option value="en">EN</option>
+                  <option value="zh">CN</option>
                 </select>
                 <span className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                   <svg

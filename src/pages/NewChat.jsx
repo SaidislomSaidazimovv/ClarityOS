@@ -1,12 +1,16 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useTranslator } from "../hooks/useTranslator";
 
 export default function NewChat() {
   const location = useLocation();
   const navigate = useNavigate();
   const [displayedText, setDisplayedText] = useState("");
-  const result = location.state?.result || "❌ Natija topilmadi";
+  const result = location.state?.result || "❌ Not Found";
+
+  const aiAnswerText = useTranslator("AI Answer");
+  const newPromptText = useTranslator("New Prompt");
 
   useEffect(() => {
     let i = 0;
@@ -27,7 +31,7 @@ export default function NewChat() {
         className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-6 border border-gray-100"
       >
         <h2 className="text-lg font-semibold text-indigo-600 mb-4">
-          🤖 AI Javobi:
+          🤖 {aiAnswerText}:
         </h2>
 
         <div className="bg-gray-100 rounded-xl p-4 text-left shadow-inner">
@@ -40,7 +44,7 @@ export default function NewChat() {
           onClick={() => navigate("/")}
           className="mt-6 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-md"
         >
-          🔙 Yangi Prompt
+          🔙 {newPromptText}
         </button>
       </motion.div>
     </div>

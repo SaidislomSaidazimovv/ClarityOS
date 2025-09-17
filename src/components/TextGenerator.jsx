@@ -2,20 +2,28 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useTranslator } from "../hooks/useTranslator";
 
 export default function TextGenerator() {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const titleText = useTranslator("AI Text Generator");
+  const placeholderText = useTranslator("O‘zingizning promptingizni yozing...");
+  const generateBtn = useTranslator("✨ Generate Text");
+  const generatingBtn = useTranslator("⏳ Generating...");
+  const errorText = useTranslator("❌ Xatolik yuz berdi");
+
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
     setLoading(true);
 
     try {
-      const res = await axios.post("https://bc-1kwq.onrender.com/api/generate", {
-        prompt,
-      });
+      const res = await axios.post(
+        "https://bc-1kwq.onrender.com/api/generate",
+        { prompt }
+      );
 
       const data = res.data;
       const finalText =
@@ -24,7 +32,7 @@ export default function TextGenerator() {
       navigate("/new-chat", { state: { result: finalText } });
     } catch (error) {
       console.error("Generate error:", error);
-      navigate("/new-chat", { state: { result: "❌ Xatolik yuz berdi" } });
+      navigate("/new-chat", { state: { result: errorText } });
     } finally {
       setLoading(false);
     }
@@ -42,7 +50,7 @@ export default function TextGenerator() {
             bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 
             bg-clip-text text-transparent leading-[1.2]"
         >
-          AI Text Generator
+          {titleText}
         </motion.h2>
 
         <motion.div
@@ -55,7 +63,7 @@ export default function TextGenerator() {
           <textarea
             className="w-full p-4 border rounded-xl focus:ring-2 focus:ring-indigo-400 focus:outline-none mb-4 text-gray-700"
             rows={5}
-            placeholder="O‘zingizning promptingizni yozing..."
+            placeholder={placeholderText}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
@@ -65,25 +73,10 @@ export default function TextGenerator() {
             disabled={loading}
             className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition disabled:opacity-50 shadow-lg"
           >
-            {loading ? "⏳ Generating..." : "✨ Generate Text"}
+            {loading ? generatingBtn : generateBtn}
           </button>
         </motion.div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.4 }}
-        transition={{ duration: 1, delay: 0.5 }}
-        viewport={{ once: true }}
-        className="absolute top-10 left-10 w-72 h-72 bg-indigo-400/20 blur-3xl rounded-full"
-      />
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.4 }}
-        transition={{ duration: 1, delay: 0.8 }}
-        viewport={{ once: true }}
-        className="absolute bottom-10 right-10 w-80 h-80 bg-pink-400/20 blur-3xl rounded-full"
-      />
     </section>
   );
 }

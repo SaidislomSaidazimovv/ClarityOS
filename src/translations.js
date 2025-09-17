@@ -240,4 +240,57 @@ export const translations = {
     ru: "Все права защищены.",
     zh: "版权所有。",
   },
+
+  // TEXT GENERATOR texts
+  "AI Text Generator": {
+    uz: "AI Matn Generator",
+    en: "AI Text Generator",
+    ru: "AI Генератор текста",
+    zh: "AI 文本生成器",
+  },
+  "O‘zingizning promptingizni yozing...": {
+    uz: "O‘zingizning promptingizni yozing...",
+    en: "Write your own prompt...",
+    ru: "Напишите свой запрос...",
+    zh: "写下你的提示...",
+  },
+  "⏳ Generating...": {
+    uz: "⏳ Yaratilmoqda...",
+    en: "⏳ Generating...",
+    ru: "⏳ Генерация...",
+    zh: "⏳ 正在生成...",
+  },
+  "✨ Generate Text": {
+    uz: "✨ Matn yaratish",
+    en: "✨ Generate Text",
+    ru: "✨ Сгенерировать текст",
+    zh: "✨ 生成文本",
+  },
+  "❌ Xatolik yuz berdi": {
+    uz: "❌ Xatolik yuz berdi",
+    en: "❌ An error occurred",
+    ru: "❌ Произошла ошибка",
+    zh: "❌ 发生错误",
+  },
+
+  // NEW CHAT texts
+
+  "AI Answer": {
+    ru: "Ответ ИИ",
+    uz: "AI Javobi",
+    en: "AI Answer",
+    zh: "人工智能回答",
+  },
+  "New Prompt": {
+    ru: "Новый запрос",
+    uz: "Yangi Prompt",
+    en: "New Prompt",
+    zh: "新提示",
+  },
+  "Not Found": {
+    ru: "❌ Не найдено",
+    uz: "❌ Natija topilmadi",
+    en: "❌ Not Found",
+    zh: "❌ 未找到",
+  },
 };

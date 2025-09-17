@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { translations } from "../translations";
 
 export function useTranslator(text) {
-  const [lang, setLang] = useState(localStorage.getItem("lang") || "ru");
+  const [lang, setLang] = useState(localStorage.getItem("lang") || "en");
   const [translated, setTranslated] = useState(text);
 
   useEffect(() => {
@@ -10,7 +10,7 @@ export function useTranslator(text) {
     setTranslated(t);
 
     const listener = () => {
-      const newLang = localStorage.getItem("lang") || "ru";
+      const newLang = localStorage.getItem("lang") || "en";
       setLang(newLang);
     };
 

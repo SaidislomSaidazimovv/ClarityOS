@@ -3,38 +3,51 @@ import { useState, useEffect } from "react";
 import PreviewPanel from "./Preview";
 
 export default function BriefBuilder() {
-  const [step, setStep] = useState(
-    () => parseInt(localStorage.getItem("step")) || 1
+  const [step, setStep] = useState(() =>
+    parseInt(sessionStorage.getItem("step") || "1")
   );
+
   const [company, setCompany] = useState(
-    () => localStorage.getItem("company") || ""
+    () => sessionStorage.getItem("company") || ""
   );
   const [project, setProject] = useState(
-    () => localStorage.getItem("project") || ""
+    () => sessionStorage.getItem("project") || ""
   );
-  const [competitor1, setCompetitor1] = useState(
-    () => localStorage.getItem("competitor1") || ""
+  const [tagline, setTagline] = useState(
+    () => sessionStorage.getItem("tagline") || ""
   );
-  const [competitor2, setCompetitor2] = useState(
-    () => localStorage.getItem("competitor2") || ""
+  const [industry, setIndustry] = useState(
+    () => sessionStorage.getItem("industry") || ""
   );
+
   const [fade, setFade] = useState(false);
 
+  const [attributes, setAttributes] = useState(() => {
+    try {
+      const raw = sessionStorage.getItem("attributes");
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+      console.error("Failed to parse attributes from sessionStorage:", err);
+      sessionStorage.removeItem("attributes");
+      return [];
+    }
+  });
+
   useEffect(() => {
-    localStorage.setItem("company", company);
-  }, [company]);
-  useEffect(() => {
-    localStorage.setItem("project", project);
-  }, [project]);
-  useEffect(() => {
-    localStorage.setItem("competitor1", competitor1);
-  }, [competitor1]);
-  useEffect(() => {
-    localStorage.setItem("competitor2", competitor2);
-  }, [competitor2]);
-  useEffect(() => {
-    localStorage.setItem("step", step);
-  }, [step]);
+    try {
+      sessionStorage.setItem("attributes", JSON.stringify(attributes));
+    } catch (err) {
+      console.error("Failed to save attributes to sessionStorage:", err);
+    }
+  }, [attributes]);
+
+  useEffect(() => sessionStorage.setItem("company", company), [company]);
+  useEffect(() => sessionStorage.setItem("project", project), [project]);
+  useEffect(() => sessionStorage.setItem("tagline", tagline), [tagline]);
+  useEffect(() => sessionStorage.setItem("industry", industry), [industry]);
+  useEffect(() => sessionStorage.setItem("step", step.toString()), [step]);
 
   const handleNext = () => {
     setFade(true);
@@ -73,18 +86,22 @@ export default function BriefBuilder() {
             {step === 1 && (
               <>
                 <h3 className="text-lg font-semibold mb-3">
-                  1. Название компании / Проекта
+                  1. AI prompt writing
                 </h3>
+                <p className="text-sm font-light leading-normal mb-2">
+                  Hints that include: Mission, target audience, auditorium,
+                  contestants,
+                </p>
                 <input
                   type="text"
-                  placeholder="Введите название вашего бренда"
+                  placeholder="Enter your brand name"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
                 {company && (
                   <p className="mt-2 text-sm text-gray-600 font-light">
-                    Привет, {company}! Давайте создадим ваш идеальный логотип.
+                    Hello, {company}! Let’s create your perfect logo.
                   </p>
                 )}
               </>
@@ -92,41 +109,106 @@ export default function BriefBuilder() {
 
             {step === 2 && (
               <>
-                <h3 className="text-lg font-semibold mb-3">2. О компании</h3>
-                <p className="text-sm font-light leading-normal mb-2">
-                  Для чего существует ваш бренд? Что он стремится достичь в
-                  мире?
-                </p>
+                <h3 className="text-lg font-semibold mb-3">
+                  2. Brand Identity
+                </h3>
+
+                <label className="block text-sm font-medium mb-1">Name</label>
                 <input
                   type="text"
-                  placeholder="Наша миссия - ...."
+                  placeholder="Enter brand name"
                   value={project}
                   onChange={(e) => setProject(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
+
+                <label className="block text-sm font-medium mb-1">
+                  Tagline
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter brand tagline"
+                  value={tagline}
+                  onChange={(e) => setTagline(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+
+                <label className="block text-sm font-medium mb-1">
+                  Industry
+                </label>
+                <select
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  <option value="">Select industry...</option>
+                  <option value="technology">Technology</option>
+                  <option value="retail">Retail</option>
+                  <option value="healthcare">Healthcare</option>
+                  <option value="finance">Finance</option>
+                  <option value="education">Education</option>
+                  <option value="luxury">Luxury</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="food-beverage">Food & Beverage</option>
+                  <option value="other">Other...</option>
+                </select>
               </>
             )}
 
             {step === 3 && (
               <>
-                <h3 className="text-lg font-semibold mb-3">3. Конкуренты</h3>
+                <h3 className="text-lg font-semibold mb-3">3. Attributes</h3>
                 <p className="text-sm font-light leading-normal mb-2">
-                  Укажите 2-3 конкурентов, чтобы найти вашу уникальную нишу.
+                  Select the attributes that best describe your brand.
                 </p>
-                <input
-                  type="text"
-                  placeholder="Конкурент 1"
-                  value={competitor1}
-                  onChange={(e) => setCompetitor1(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-                />
-                <input
-                  type="text"
-                  placeholder="Конкурент 2"
-                  value={competitor2}
-                  onChange={(e) => setCompetitor2(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+
+                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                  {[
+                    "Innovative",
+                    "Minimalist",
+                    "Playful",
+                    "Professional",
+                    "Elegant",
+                    "Bold",
+                    "Friendly",
+                    "Luxury",
+                    "Modern",
+                    "Classic",
+                    "Trustworthy",
+                    "Adventurous",
+                    "Creative",
+                    "Eco-friendly",
+                    "Energetic",
+                    "Calm",
+                    "Dynamic",
+                    "Reliable",
+                    "Affordable",
+                    "Premium",
+                    "Tech-driven",
+                    "Artistic",
+                    "Sophisticated",
+                    "Youthful",
+                  ].map((attr) => (
+                    <label
+                      key={attr}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={attributes.includes(attr)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setAttributes([...attributes, attr]);
+                          } else {
+                            setAttributes(attributes.filter((a) => a !== attr));
+                          }
+                        }}
+                        className="rounded text-indigo-500 focus:ring-indigo-500"
+                      />
+                      {attr}
+                    </label>
+                  ))}
+                </div>
               </>
             )}
           </section>
@@ -153,8 +235,9 @@ export default function BriefBuilder() {
       <PreviewPanel
         company={company}
         project={project}
-        competitor1={competitor1}
-        competitor2={competitor2}
+        tagline={tagline}
+        industry={industry}
+        attributes={attributes}
       />
     </div>
   );
