@@ -23,6 +23,15 @@ export default function BriefBuilder() {
     () => sessionStorage.getItem("logos") || ""
   );
 
+  const [styleLogos, setStyleLogos] = useState(() => {
+    try {
+      const raw = sessionStorage.getItem("styleLogos");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [fade, setFade] = useState(false);
 
   const [attributes, setAttributes] = useState(() => {
@@ -63,25 +72,32 @@ export default function BriefBuilder() {
     }
   });
 
-  useEffect(() => {
-    sessionStorage.setItem("attributes", JSON.stringify(attributes));
-  }, [attributes]);
-
   useEffect(() => sessionStorage.setItem("company", company), [company]);
   useEffect(() => sessionStorage.setItem("project", project), [project]);
   useEffect(() => sessionStorage.setItem("tagline", tagline), [tagline]);
   useEffect(() => sessionStorage.setItem("industry", industry), [industry]);
   useEffect(() => sessionStorage.setItem("logos", logos), [logos]);
+  useEffect(
+    () => sessionStorage.setItem("styleLogos", styleLogos),
+    [styleLogos]
+  );
   useEffect(() => sessionStorage.setItem("step", step.toString()), [step]);
+  useEffect(
+    () => sessionStorage.setItem("attributes", JSON.stringify(attributes)),
+    [attributes]
+  );
   useEffect(
     () => sessionStorage.setItem("feelings", JSON.stringify(feelings)),
     [feelings]
   );
+  useEffect(() => {
+    sessionStorage.setItem("styleLogos", JSON.stringify(styleLogos));
+  }, [styleLogos]);
 
   const handleNext = () => {
     setFade(true);
     setTimeout(() => {
-      setStep((prev) => Math.min(prev + 1, 5));
+      setStep((prev) => Math.min(prev + 1, 6));
       setFade(false);
     }, 500);
   };
@@ -271,6 +287,44 @@ export default function BriefBuilder() {
                 ))}
               </>
             )}
+
+            {step === 6 && (
+              <>
+                <h3 className="text-lg font-semibold mb-3">
+                  6. Logos you like (for the style looklike)
+                </h3>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  {[
+                    { key: "circle", label: "⭕" },
+                    { key: "triangle", label: "▲" },
+                    { key: "eye", label: "👁" },
+                    { key: "square", label: "■" },
+                    { key: "curve", label: "〰️" },
+                    { key: "diamond", label: "◆" },
+                  ].map((shape) => (
+                    <button
+                      key={shape.key}
+                      onClick={() => {
+                        if (styleLogos.includes(shape.key)) {
+                          setStyleLogos(
+                            styleLogos.filter((s) => s !== shape.key)
+                          );
+                        } else {
+                          setStyleLogos([...styleLogos, shape.key]);
+                        }
+                      }}
+                      className={`flex items-center justify-center p-6 rounded-lg border-2 transition ${
+                        styleLogos.includes(shape.key)
+                          ? "border-indigo-500 bg-indigo-100"
+                          : "border-gray-300 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-4xl">{shape.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </section>
 
           <div className="absolute bottom-0 right-0 flex gap-3 p-6">
@@ -301,6 +355,7 @@ export default function BriefBuilder() {
         attributes={attributes}
         logos={logos}
         feelings={feelings}
+        styleLogos={styleLogos}
       />
     </div>
   );
