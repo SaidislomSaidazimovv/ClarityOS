@@ -73,7 +73,10 @@ export default function BriefBuilder() {
   useEffect(() => sessionStorage.setItem("industry", industry), [industry]);
   useEffect(() => sessionStorage.setItem("logos", logos), [logos]);
   useEffect(() => sessionStorage.setItem("step", step.toString()), [step]);
-  useEffect(() => sessionStorage.setItem("feelings", JSON.stringify(feelings)), [feelings]);
+  useEffect(
+    () => sessionStorage.setItem("feelings", JSON.stringify(feelings)),
+    [feelings]
+  );
 
   const handleNext = () => {
     setFade(true);
@@ -105,7 +108,9 @@ export default function BriefBuilder() {
           <section
             className={`bg-gray-50 p-6 rounded-lg shadow-md w-full transition-opacity duration-500 ${
               fade ? "opacity-0" : "opacity-100"
-            } ${step === 2 ? "max-w-xl" : step === 3 ? "max-w-2xl" : "max-w-xl"}`}
+            } ${
+              step === 2 ? "max-w-xl" : step === 3 ? "max-w-2xl" : "max-w-xl"
+            }`}
           >
             {step === 1 && (
               <>
@@ -184,7 +189,10 @@ export default function BriefBuilder() {
                     "Sophisticated",
                     "Youthful",
                   ].map((attr) => (
-                    <label key={attr} className="flex items-center gap-2 text-sm">
+                    <label
+                      key={attr}
+                      className="flex items-center gap-2 text-sm"
+                    >
                       <input
                         type="checkbox"
                         checked={attributes.includes(attr)}
@@ -222,12 +230,24 @@ export default function BriefBuilder() {
               <>
                 <h3 className="text-lg font-semibold mb-3">5. Feelings</h3>
                 {[
-                  { key: "inspirational", left: "Inspirational", right: "Comforting" },
+                  {
+                    key: "inspirational",
+                    left: "Inspirational",
+                    right: "Comforting",
+                  },
                   { key: "modern", left: "Modern", right: "Timeless" },
                   { key: "formal", left: "Formal", right: "Friendly" },
                   { key: "powerful", left: "Powerful", right: "Tender" },
-                  { key: "stability", left: "Stability, Control", right: "Risk and Mastery" },
-                  { key: "belonging", left: "Belonging & People", right: "Independence & Self-Realization" },
+                  {
+                    key: "stability",
+                    left: "Stability, Control",
+                    right: "Risk and Mastery",
+                  },
+                  {
+                    key: "belonging",
+                    left: "Belonging & People",
+                    right: "Independence & Self-Realization",
+                  },
                 ].map(({ key, left, right }) => (
                   <div key={key} className="mb-4">
                     <div className="flex justify-between text-sm mb-1">
@@ -238,9 +258,12 @@ export default function BriefBuilder() {
                       type="range"
                       min={0}
                       max={100}
-                       value={feelings[key]}
+                      value={feelings[key]}
                       onChange={(e) =>
-                        setFeelings({ ...feelings, [key]: Number(e.target.value) })
+                        setFeelings({
+                          ...feelings,
+                          [key]: Number(e.target.value),
+                        })
                       }
                       className="w-full accent-indigo-500"
                     />
@@ -270,6 +293,7 @@ export default function BriefBuilder() {
       </aside>
 
       <PreviewPanel
+        step={step}
         company={company}
         project={project}
         tagline={tagline}

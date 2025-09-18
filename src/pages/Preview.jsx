@@ -1,4 +1,5 @@
 export default function PreviewPanel({
+  step,
   company,
   project,
   tagline,
@@ -85,7 +86,7 @@ export default function PreviewPanel({
           </div>
         )}
 
-        {feelings && (
+        {step === 5 && feelings && (
           <div className="mt-6">
             <h4 className="font-semibold text-sm mb-3">Brand Feelings:</h4>
             <div className="space-y-3">
