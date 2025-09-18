@@ -4,12 +4,16 @@ export default function PreviewPanel({
   tagline,
   industry,
   attributes,
+  logos,
+  feelings,
 }) {
   const step1Increment = 11;
   const step2Increment = 11;
   const taglineIncrement = 3;
   const industryIncrement = 3;
   const attributesIncrement = 5;
+  const logosIncrement = 5;
+  const feelingsIncrement = 5;
 
   let completionPercent = 0;
   let archetypePercent = 0;
@@ -21,6 +25,12 @@ export default function PreviewPanel({
   if (industry && industry.trim() !== "") archetypePercent += industryIncrement;
   if (attributes.length > 0)
     archetypePercent += attributes.length * attributesIncrement;
+  if (logos && logos.trim() !== "") archetypePercent += logosIncrement;
+  if (feelings) archetypePercent += feelingsIncrement;
+
+  const logosList = logos
+    ? logos.split(",").map((logo) => logo.trim()).filter(Boolean)
+    : [];
 
   return (
     <main className="flex-1 h-screen flex items-center justify-center bg-gray-100 text-gray-900">
@@ -54,6 +64,44 @@ export default function PreviewPanel({
                 >
                   {attr}
                 </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {logosList.length > 0 && (
+          <div className="mt-4">
+            <h4 className="font-semibold text-sm mb-2">Logos you admire:</h4>
+            <div className="flex flex-wrap gap-2">
+              {logosList.map((logo) => (
+                <span
+                  key={logo}
+                  className="px-2 py-1 bg-purple-100 text-purple-600 text-xs rounded-full"
+                >
+                  {logo}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {feelings && (
+          <div className="mt-6">
+            <h4 className="font-semibold text-sm mb-3">Brand Feelings:</h4>
+            <div className="space-y-3">
+              {Object.entries(feelings).map(([key, value]) => (
+                <div key={key}>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-gray-600">{key}</span>
+                    <span className="text-gray-600">{value}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full">
+                    <div
+                      className="h-2 rounded-full bg-pink-500"
+                      style={{ width: `${value}%` }}
+                    ></div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
