@@ -10,6 +10,7 @@ export default function PreviewPanel({
   logos = "",
   feelings = null,
   styleLogos = [],
+  colors = {},
 }) {
   const step1Increment = 11;
   const step2Increment = 11;
@@ -32,14 +33,20 @@ export default function PreviewPanel({
   const feelingsActive =
     feelings && Object.values(feelings).some((v) => Number(v) !== 50);
   const feelingsPercent = feelingsActive
-    ? Object.values(feelings).reduce((acc, v) => acc + Math.abs(Number(v) - 50) / 10, 0)
+    ? Object.values(feelings).reduce(
+        (acc, v) => acc + Math.abs(Number(v) - 50) / 10,
+        0
+      )
     : 0;
 
   archetypePercent += feelingsPercent;
 
   const logosList = useMemo(() => {
     if (!logos) return [];
-    return logos.split(",").map((s) => s.trim()).filter(Boolean);
+    return logos
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
   }, [logos]);
 
   const styleLogosList = useMemo(() => {
@@ -50,9 +57,15 @@ export default function PreviewPanel({
         const parsed = JSON.parse(styleLogos);
         return Array.isArray(parsed)
           ? parsed
-          : styleLogos.split(",").map((s) => s.trim()).filter(Boolean);
+          : styleLogos
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean);
       } catch {
-        return styleLogos.split(",").map((s) => s.trim()).filter(Boolean);
+        return styleLogos
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
       }
     }
     return [];
@@ -74,6 +87,18 @@ export default function PreviewPanel({
       archetypePercent += eff.archetype;
     }
   });
+
+  if (colors && Object.keys(colors).length > 0) {
+    const colorCount = Object.keys(colors).length;
+    completionPercent += 20;
+
+    let archetypeBase = 100;
+    if (colorCount > 1) {
+      archetypeBase -= (colorCount - 1) * 10;
+    }
+
+    archetypePercent += Math.max(archetypeBase, 0);
+  }
 
   const clamp = (v) => Math.max(0, Math.min(100, Math.round(v)));
 
@@ -141,7 +166,9 @@ export default function PreviewPanel({
 
         {step === 6 && styleLogosList.length > 0 && (
           <div className="mt-4">
-            <h4 className="font-semibold text-sm mb-2">Style logos selected:</h4>
+            <h4 className="font-semibold text-sm mb-2">
+              Style logos selected:
+            </h4>
             <div className="grid grid-cols-3 gap-2 max-w-xs">
               {styleLogosList.map((s) => (
                 <div
@@ -179,6 +206,21 @@ export default function PreviewPanel({
           </div>
         )}
 
+        {step === 7 && colors && Object.keys(colors).length > 0 && (
+          <div className="mt-6">
+            <h4 className="font-semibold text-sm mb-3">Selected Colors:</h4>
+            <div className="flex gap-3">
+              {Object.entries(colors).map(([name, hex]) => (
+                <div
+                  key={name}
+                  className="w-10 h-10 rounded-full border shadow"
+                  style={{ backgroundColor: hex }}
+                  title={`${name}: ${hex}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );

@@ -32,6 +32,15 @@ export default function BriefBuilder() {
     }
   });
 
+  const [colors, setColors] = useState(() => {
+    try {
+      const raw = sessionStorage.getItem("colors");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [fade, setFade] = useState(false);
 
   const [attributes, setAttributes] = useState(() => {
@@ -94,10 +103,15 @@ export default function BriefBuilder() {
     sessionStorage.setItem("styleLogos", JSON.stringify(styleLogos));
   }, [styleLogos]);
 
+  useEffect(
+    () => sessionStorage.setItem("colors", JSON.stringify(colors)),
+    [colors]
+  );
+
   const handleNext = () => {
     setFade(true);
     setTimeout(() => {
-      setStep((prev) => Math.min(prev + 1, 6));
+      setStep((prev) => Math.min(prev + 1, 7));
       setFade(false);
     }, 500);
   };
@@ -325,6 +339,80 @@ export default function BriefBuilder() {
                 </div>
               </>
             )}
+
+            {step === 7 && (
+              <>
+                <h3 className="text-lg font-semibold mb-3">7. Colors</h3>
+                <div className="flex gap-4 flex-wrap">
+                  {[
+                    { key: "green", hex: "#22c55e", name: "Green" },
+                    {
+                      key: "light-yellow",
+                      hex: "#fef9c3",
+                      name: "Light-yellow",
+                    },
+                    { key: "yellow", hex: "#eab308", name: "Yellow" },
+                    {
+                      key: "light-purple",
+                      hex: "#e9d5ff",
+                      name: "Light-purple",
+                    },
+                    { key: "red", hex: "#ef4444", name: "Red" },
+                    { key: "light-green", hex: "#bbf7d0", name: "Light-green" },
+                    { key: "black", hex: "#000000", name: "Black" },
+                    { key: "light-blue", hex: "#bfdbfe", name: "Light-blue" },
+                    { key: "blue", hex: "#3b82f6", name: "Blue" },
+                    { key: "light-red", hex: "#fecaca", name: "Light-red" },
+                    { key: "pink", hex: "#ec4899", name: "Pink" },
+                    { key: "light-pink", hex: "#fbcfe8", name: "light-pink" },
+                  ].map((color) => (
+                    <button
+                      key={color.key}
+                      onClick={() => {
+                        if (colors.includes(color.key)) {
+                          setColors(colors.filter((c) => c !== color.key));
+                        } else {
+                          setColors([...colors, color.key]);
+                        }
+                      }}
+                      className={`w-12 h-12 rounded-full border-2 transition ${
+                        colors.includes(color.key)
+                          ? "border-gray-900"
+                          : "border-transparent"
+                      }`}
+                      style={{ backgroundColor: color.hex }}
+                    />
+                  ))}
+                </div>
+
+                {colors.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold text-sm mb-2">
+                      Recommended colors:
+                    </h4>
+                    <p className="text-gray-700">
+                      {[
+                        { key: "green", name: "Green" },
+                        { key: "yellow", name: "Yellow" },
+                        { key: "red", name: "Red" },
+                        { key: "black", name: "Black" },
+                        { key: "blue", name: "Blue" },
+                        { key: "pink", name: "Pink" },
+                        { key: "light-green", name: "Light-green" },
+                        { key: "light-yellow", name: "Light-yellow" },
+                        { key: "light-red", name: "Light-red" },
+                        { key: "light-blue", name: "Light-blue" },
+                        { key: "light-pink", name: "Light-pink" },
+                        { key: "light-purple", name: "Light-purple" },
+                      ]
+                        .filter((c) => colors.includes(c.key))
+                        .map((c) => c.name)
+                        .join(", ")}
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
           </section>
 
           <div className="absolute bottom-0 right-0 flex gap-3 p-6">
@@ -356,6 +444,7 @@ export default function BriefBuilder() {
         logos={logos}
         feelings={feelings}
         styleLogos={styleLogos}
+        colors={colors}
       />
     </div>
   );
