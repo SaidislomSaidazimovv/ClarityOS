@@ -91,12 +91,10 @@ export default function PreviewPanel({
   if (colors && Object.keys(colors).length > 0) {
     const colorCount = Object.keys(colors).length;
     completionPercent += 20;
-
     let archetypeBase = 100;
     if (colorCount > 1) {
-      archetypeBase -= (colorCount - 1) * 10;
+      archetypeBase -= (colorCount - 1) * 15;
     }
-
     archetypePercent += Math.max(archetypeBase, 0);
   }
 
@@ -209,7 +207,8 @@ export default function PreviewPanel({
         {step === 7 && colors && Object.keys(colors).length > 0 && (
           <div className="mt-6">
             <h4 className="font-semibold text-sm mb-3">Selected Colors:</h4>
-            <div className="flex gap-3">
+
+            <div className="flex gap-3 mb-2">
               {Object.entries(colors).map(([name, hex]) => (
                 <div
                   key={name}

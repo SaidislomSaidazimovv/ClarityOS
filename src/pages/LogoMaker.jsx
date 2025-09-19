@@ -35,9 +35,9 @@ export default function BriefBuilder() {
   const [colors, setColors] = useState(() => {
     try {
       const raw = sessionStorage.getItem("colors");
-      return raw ? JSON.parse(raw) : [];
+      return raw ? JSON.parse(raw) : {};
     } catch {
-      return [];
+      return {};
     }
   });
 
@@ -87,7 +87,7 @@ export default function BriefBuilder() {
   useEffect(() => sessionStorage.setItem("industry", industry), [industry]);
   useEffect(() => sessionStorage.setItem("logos", logos), [logos]);
   useEffect(
-    () => sessionStorage.setItem("styleLogos", styleLogos),
+    () => sessionStorage.setItem("styleLogos", JSON.stringify(styleLogos)),
     [styleLogos]
   );
   useEffect(() => sessionStorage.setItem("step", step.toString()), [step]);
@@ -99,10 +99,6 @@ export default function BriefBuilder() {
     () => sessionStorage.setItem("feelings", JSON.stringify(feelings)),
     [feelings]
   );
-  useEffect(() => {
-    sessionStorage.setItem("styleLogos", JSON.stringify(styleLogos));
-  }, [styleLogos]);
-
   useEffect(
     () => sessionStorage.setItem("colors", JSON.stringify(colors)),
     [colors]
@@ -113,7 +109,7 @@ export default function BriefBuilder() {
     setTimeout(() => {
       setStep((prev) => Math.min(prev + 1, 7));
       setFade(false);
-    }, 500);
+    }, 300);
   };
 
   const handleBack = () => {
@@ -121,8 +117,23 @@ export default function BriefBuilder() {
     setTimeout(() => {
       setStep((prev) => Math.max(prev - 1, 1));
       setFade(false);
-    }, 500);
+    }, 300);
   };
+
+  const palette = [
+    { key: "green", hex: "#22c55e", name: "Green" },
+    { key: "light-yellow", hex: "#fef9c3", name: "Light Yellow" },
+    { key: "yellow", hex: "#eab308", name: "Yellow" },
+    { key: "light-purple", hex: "#e9d5ff", name: "Light Purple" },
+    { key: "red", hex: "#ef4444", name: "Red" },
+    { key: "light-green", hex: "#bbf7d0", name: "Light Green" },
+    { key: "black", hex: "#000000", name: "Black" },
+    { key: "light-blue", hex: "#bfdbfe", name: "Light Blue" },
+    { key: "blue", hex: "#3b82f6", name: "Blue" },
+    { key: "light-red", hex: "#fecaca", name: "Light Red" },
+    { key: "pink", hex: "#ec4899", name: "Pink" },
+    { key: "light-pink", hex: "#fbcfe8", name: "Light Pink" },
+  ];
 
   return (
     <div className="flex h-screen relative">
@@ -227,11 +238,10 @@ export default function BriefBuilder() {
                         type="checkbox"
                         checked={attributes.includes(attr)}
                         onChange={(e) => {
-                          if (e.target.checked) {
+                          if (e.target.checked)
                             setAttributes([...attributes, attr]);
-                          } else {
+                          else
                             setAttributes(attributes.filter((a) => a !== attr));
-                          }
                         }}
                       />
                       {attr}
@@ -319,13 +329,11 @@ export default function BriefBuilder() {
                     <button
                       key={shape.key}
                       onClick={() => {
-                        if (styleLogos.includes(shape.key)) {
+                        if (styleLogos.includes(shape.key))
                           setStyleLogos(
                             styleLogos.filter((s) => s !== shape.key)
                           );
-                        } else {
-                          setStyleLogos([...styleLogos, shape.key]);
-                        }
+                        else setStyleLogos([...styleLogos, shape.key]);
                       }}
                       className={`flex items-center justify-center p-6 rounded-lg border-2 transition ${
                         styleLogos.includes(shape.key)
@@ -343,69 +351,43 @@ export default function BriefBuilder() {
             {step === 7 && (
               <>
                 <h3 className="text-lg font-semibold mb-3">7. Colors</h3>
+
                 <div className="flex gap-4 flex-wrap">
-                  {[
-                    { key: "green", hex: "#22c55e", name: "Green" },
-                    {
-                      key: "light-yellow",
-                      hex: "#fef9c3",
-                      name: "Light-yellow",
-                    },
-                    { key: "yellow", hex: "#eab308", name: "Yellow" },
-                    {
-                      key: "light-purple",
-                      hex: "#e9d5ff",
-                      name: "Light-purple",
-                    },
-                    { key: "red", hex: "#ef4444", name: "Red" },
-                    { key: "light-green", hex: "#bbf7d0", name: "Light-green" },
-                    { key: "black", hex: "#000000", name: "Black" },
-                    { key: "light-blue", hex: "#bfdbfe", name: "Light-blue" },
-                    { key: "blue", hex: "#3b82f6", name: "Blue" },
-                    { key: "light-red", hex: "#fecaca", name: "Light-red" },
-                    { key: "pink", hex: "#ec4899", name: "Pink" },
-                    { key: "light-pink", hex: "#fbcfe8", name: "light-pink" },
-                  ].map((color) => (
+                  {palette.map((color) => (
                     <button
                       key={color.key}
                       onClick={() => {
-                        if (colors.includes(color.key)) {
-                          setColors(colors.filter((c) => c !== color.key));
-                        } else {
-                          setColors([...colors, color.key]);
-                        }
+                        setColors((prev) => {
+                          const exists = Boolean(prev && prev[color.key]);
+                          const updated = { ...(prev || {}) };
+                          if (exists) {
+                            delete updated[color.key];
+                          } else {
+                            updated[color.key] = color.hex;
+                          }
+                          return updated;
+                        });
                       }}
                       className={`w-12 h-12 rounded-full border-2 transition ${
-                        colors.includes(color.key)
+                        colors[color.key]
                           ? "border-gray-900"
                           : "border-transparent"
                       }`}
                       style={{ backgroundColor: color.hex }}
+                      aria-pressed={Boolean(colors[color.key])}
+                      title={color.name}
                     />
                   ))}
                 </div>
 
-                {colors.length > 0 && (
+                {Object.keys(colors).length > 0 && (
                   <div className="mt-4">
                     <h4 className="font-semibold text-sm mb-2">
                       Recommended colors:
                     </h4>
                     <p className="text-gray-700">
-                      {[
-                        { key: "green", name: "Green" },
-                        { key: "yellow", name: "Yellow" },
-                        { key: "red", name: "Red" },
-                        { key: "black", name: "Black" },
-                        { key: "blue", name: "Blue" },
-                        { key: "pink", name: "Pink" },
-                        { key: "light-green", name: "Light-green" },
-                        { key: "light-yellow", name: "Light-yellow" },
-                        { key: "light-red", name: "Light-red" },
-                        { key: "light-blue", name: "Light-blue" },
-                        { key: "light-pink", name: "Light-pink" },
-                        { key: "light-purple", name: "Light-purple" },
-                      ]
-                        .filter((c) => colors.includes(c.key))
+                      {palette
+                        .filter((c) => colors[c.key])
                         .map((c) => c.name)
                         .join(", ")}
                     </p>
