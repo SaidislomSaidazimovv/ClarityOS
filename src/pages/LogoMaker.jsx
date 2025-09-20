@@ -41,6 +41,14 @@ export default function BriefBuilder() {
     }
   });
 
+  const [font, setFont] = useState(() => {
+    try {
+      return sessionStorage.getItem("font") || "";
+    } catch {
+      return "";
+    }
+  });
+
   const [fade, setFade] = useState(false);
 
   const [attributes, setAttributes] = useState(() => {
@@ -103,11 +111,12 @@ export default function BriefBuilder() {
     () => sessionStorage.setItem("colors", JSON.stringify(colors)),
     [colors]
   );
+  useEffect(() => sessionStorage.setItem("font", font), [font]);
 
   const handleNext = () => {
     setFade(true);
     setTimeout(() => {
-      setStep((prev) => Math.min(prev + 1, 7));
+      setStep((prev) => Math.min(prev + 1, 8));
       setFade(false);
     }, 300);
   };
@@ -395,6 +404,31 @@ export default function BriefBuilder() {
                 )}
               </>
             )}
+
+            {step === 8 && (
+              <>
+                <h3 className="text-lg font-semibold mb-3">8. Fonts</h3>
+                <select
+                  value={font}
+                  onChange={(e) => setFont(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg"
+                >
+                  <option value="" disabled hidden>
+                    Select Fonts
+                  </option>
+                  <option value="Roboto">Roboto</option>
+                  <option value="Montserrat">Montserrat</option>
+                  <option value="Poppins">Poppins</option>
+                  <option value="Lobster">Lobster</option>
+                  <option value="Playfair Display">Playfair Display</option>
+                  <option value="Lato">Lato</option>
+                  <option value="Dancing Script">Dancing Script</option>
+                  <option value="Raleway">Raleway</option>
+                  <option value="Pacifico">Pacifico</option>
+                  <option value="Merriweather">Merriweather</option>
+                </select>
+              </>
+            )}
           </section>
 
           <div className="absolute bottom-0 right-0 flex gap-3 p-6">
@@ -427,6 +461,7 @@ export default function BriefBuilder() {
         feelings={feelings}
         styleLogos={styleLogos}
         colors={colors}
+        font={font}
       />
     </div>
   );

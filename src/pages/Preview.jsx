@@ -11,6 +11,7 @@ export default function PreviewPanel({
   feelings = null,
   styleLogos = [],
   colors = {},
+  font = "",
 }) {
   const step1Increment = 11;
   const step2Increment = 11;
@@ -96,6 +97,11 @@ export default function PreviewPanel({
       archetypeBase -= (colorCount - 1) * 15;
     }
     archetypePercent += Math.max(archetypeBase, 0);
+  }
+
+  if (font && font.trim() !== "") {
+    completionPercent += 15;
+    archetypePercent += 100;
   }
 
   const clamp = (v) => Math.max(0, Math.min(100, Math.round(v)));
@@ -218,6 +224,15 @@ export default function PreviewPanel({
                 />
               ))}
             </div>
+          </div>
+        )}
+
+        {step === 8 && font && font.trim() !== "" && (
+          <div className="mt-6">
+            <h4 className="font-semibold text-sm mb-3">Selected Font:</h4>
+            <p style={{ fontFamily: font }} className="text-3xl">
+              The quick brown fox jumps over the lazy dog
+            </p>
           </div>
         )}
       </section>
